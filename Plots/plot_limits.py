@@ -30,7 +30,7 @@ parser.add_argument("-sl","--SecondHHWWggCatLabel",type=str, default="SecondUnLa
 parser.add_argument("-g","--Grid",action="store_true", default=False, help="Plot grid of limits", required=False)
 parser.add_argument("-gl", "--GridLabels", type=str, nargs='+',default="", help="Labels to add to grid", required=False)
 parser.add_argument("--campaign",type=str, default="", help="Campaign name used to find limit root files", required=False)
-parser.add_argument("--resultType",type=str, default="", help="Result type to choose which BR's to apply", required=True) # Ex: WWgg, HH
+parser.add_argument("--resultType",type=str, default="HH", help="Result type to choose which BR's to apply", required=True) # Ex: WWgg, HH
 parser.add_argument("--unit",type=str, default="", help="Result unit: fb or pb", required=True)
 parser.add_argument("--ymin",type=float, default=0, help="Y minimum", required=True)
 parser.add_argument("--ymax",type=float, default=0, help="Y maximum", required=True)
@@ -52,15 +52,15 @@ def getLimits(file_name):
     # print'file_name = ',file_name 
     file = TFile(file_name)
     tree = file.Get("limit")
- 
+    # 1pb = 1000fb
     limits = [ ]
     for quantile in tree:
         if(args.unit == "fb"):
             limits.append(tree.limit) # value is already in fb because multiplied by arb. XS = 1fb 
         elif(args.unit == "pb"):
             limits.append(tree.limit * 1000.) # pb
-	elif(args.SM_Point):
-	    limits.append(tree.limit)
+        elif(args.SM_Point):
+	        limits.append(tree.limit)
  
     return limits[:6]
  
@@ -81,7 +81,7 @@ def plotUpperLimits(labels,values,resultType):
     up2s = [ ]
     nonBRvals = [] 
     for i in range(N):
-        file_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/higgsCombine%s.AsymptoticLimits.mH125.root"%(labels[i])
+        file_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/combined_limit/higgsCombine%s_combined.AsymptoticLimits.mH125.root"%(labels[i])
         print"file: ",file_name
         limit = getLimits(file_name)
         up2s.append(limit[4])
@@ -89,25 +89,29 @@ def plotUpperLimits(labels,values,resultType):
         campaignBRdict = {
             "HHWWgg_v2-3": 3.4916, # (1 / BR) of qqlnu. Electron and Muon decays only 
             "HHWWgg_v2-7": 2.3079, # (1 / BR) of qqlnu. Electron, Muon, all Tau decays INCLUDED
-            "HHWWgg_v3": 1 # (1 / BR) of qqqq. 
+            "HHWWgg_4q": 1.483459427384661 # (1 / BR) of qqqq. 
             # "HHWWgg_v2-7": 2.2779 # (1 / BR) of qqlnu. Electron, Muon, all Tau decays INCLUDED
         }
 
-        # HHWWgg_qqlnu_factor = campaignBRdict[args.campaign]
-        HHWWgg_qqqq_factor = campaignBRdict['HHWWgg_v3']
+        # HHWWgg_qqlnu_factor = campaignBRdict["HHWWgg_v2-7"]
+        WWgg_factor = campaignBRdict['HHWWgg_4q']
 
         HHWWgg_WWgg_factor = 1030.7153 
 
         lumiRescaledict = {
-            "": 1,
+            "default": 1,
             "2017_2016": 1.07517  # rescale from 2017 to 2016 
         }
 
-        HHWWgg_lumiRescaleFactor = lumiRescaledict['2017_2016']
+        HHWWgg_lumiRescaleFactor = lumiRescaledict['default']
 
-        if(resultType == "WWgg"): HHWWgg_factor = HHWWgg_qqqq_factor*HHWWgg_lumiRescaleFactor
-        elif(resultType == "HH"): HHWWgg_factor = HHWWgg_qqlnu_factor*HHWWgg_WWgg_factor*HHWWgg_lumiRescaleFactor
-
+        if(resultType == "WWgg"): HHWWgg_factor = HHWWgg_qqlnu_factor*HHWWgg_lumiRescaleFactor
+        elif(resultType == "HH"):
+            print("WWgg_factor:", WWgg_factor)
+            print("HHWWgg_WWgg_factor:", HHWWgg_WWgg_factor)
+            print("HHWWgg_lumiRescaleFactor:", HHWWgg_lumiRescaleFactor)
+            HHWWgg_factor = WWgg_factor*HHWWgg_WWgg_factor*HHWWgg_lumiRescaleFactor
+        # HHWWgg_factor = 1 #attention: the br already add in datacard, if not please don't use this
         yellow.SetPoint(    i,    values[i], limit[4]*HHWWgg_factor ) # + 2 sigma
         green.SetPoint(     i,    values[i], limit[3]*HHWWgg_factor ) # + 1 sigma
         median.SetPoint(    i,    values[i], limit[2]*HHWWgg_factor ) # median
@@ -148,11 +152,11 @@ def plotUpperLimits(labels,values,resultType):
     c.SetTickx(0)
     c.SetTicky(0)
     c.SetGrid()
-    # c.SetLogy()
-    # gPad.SetLogy()
+    c.SetLogy()
+    gPad.SetLogy()
     c.cd()
-    # ROOT.gPad.SetLogy()
-    # c.SetLogy()
+    ROOT.gPad.SetLogy()
+    c.SetLogy()
     frame = c.DrawFrame(1.4,0.001, 4.1, 10)
     frame.GetYaxis().CenterTitle()
     frame.GetYaxis().SetTitleSize(0.05)
@@ -181,9 +185,9 @@ def plotUpperLimits(labels,values,resultType):
     # frame.GetXaxis().SetTitle("background systematic uncertainty [%]")
     if(args.SM_Point): frame.GetXaxis().SetTitle("Standard Model")
     else: frame.GetXaxis().SetTitle("Radion Mass (GeV)")
-    # frame.SetMinimum(0)
+    frame.SetMinimum(100)
     # frame.SetMinimum(1) # need Minimum > 0 for log scale 
-    frame.SetMinimum(args.ymin) # need Minimum > 0 for log scale 
+    # frame.SetMinimum(args.ymin) # need Minimum > 0 for log scale 
     # frame.SetMaximum(max(up2s)*1.05)
     # frame.SetMaximum(max(up2s)*2)
     # frame.SetMaximum(1000.)
@@ -209,7 +213,7 @@ def plotUpperLimits(labels,values,resultType):
     median.SetMarkerStyle(8)
     median.Draw('PLsame')
  
-    CMS_lumi.CMS_lumi(c,4,11)
+    CMS_lumi.CMS_lumi(c,5,11) # 5 for 2017, 4 for all years
     ROOT.gPad.SetTicks(1,1)
     frame.Draw('sameaxis')
  
@@ -236,24 +240,16 @@ def plotUpperLimits(labels,values,resultType):
     label.SetTextAngle(0)
     label.SetTextColor(kBlack)
     label.SetTextFont(42)
-    label.SetTextSize(0.045)
+    label.SetTextSize(0.03)
     label.SetLineWidth(2)
     if(args.systematics): label.DrawLatex(0.7,0.7 + yboost,"SYST + STAT")
     else: label.DrawLatex(0.7,0.7 + yboost,"STAT ONLY")
     
-    print " "
+    # print " "
     
     outFile = ''
     outFile += ol + '/'
-    if(args.CMS_compare):
-        outFile += "CMS_Compare_"
-    if(args.All_Points):
-	outFile += "All_Points_"
-    if(args.atlas_compare):
-        outFile += "atlas_Compare_"
-
-    if args.SM_Point: outFile += "SM_"
-
+   
     outFile += args.HHWWggCatLabel + "_"
 
     # args.lumiRescale
@@ -263,9 +259,9 @@ def plotUpperLimits(labels,values,resultType):
     c.Close()
 
 def main():
-    labels = ['M500','M1000','M2000','M3000']
-    values = [500,1000,2000,3000]
-    resultType = 'WWgg'
+    labels = ['M300','M500','M700','M1000','M1500','M2000','M2600','M3000']
+    values = [300,500,700,1000,1500,2000,2600,3000]
+    resultType = args.resultType
     plotUpperLimits(labels,values,resultType)
 if __name__ == '__main__':
     main()
