@@ -9,10 +9,11 @@ fi
 if [ ${WhichSamples} -eq 1 ]
   then
     echo "running SL channel"
-    python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/Signal_M500_SL_2017.root --inputMass 125 --productionMode gghh --year 2017  >M500_hhwwgg_MC_SL.log 2>&1 
-    python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/Signal_M1000_SL_2017.root --inputMass 125 --productionMode gghh --year 2017  >M1000_hhwwgg_MC_SL.log 2>&1 
-    python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/Signal_M2000_SL_2017.root --inputMass 125 --productionMode gghh --year 2017  >M2000_hhwwgg_MC_SL.log 2>&1
-    python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/Signal_M3000_SL_2017.root --inputMass 125 --productionMode gghh --year 2017  >M3000_hhwwgg_MC_SL.log 2>&1
+    python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/Signal_M300_SL_2017_2jets.root --inputMass 125 --productionMode gghh --year 2017  >M300_hhwwgg_MC_2jets_SL.log 2>&1 
+    # python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/Signal_M500_SL_2017.root --inputMass 125 --productionMode gghh --year 2017  >M500_hhwwgg_MC_SL.log 2>&1 
+    # python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/Signal_M1000_SL_2017.root --inputMass 125 --productionMode gghh --year 2017  >M1000_hhwwgg_MC_SL.log 2>&1 
+    # python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/Signal_M2000_SL_2017.root --inputMass 125 --productionMode gghh --year 2017  >M2000_hhwwgg_MC_SL.log 2>&1
+    # python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/Signal_M3000_SL_2017.root --inputMass 125 --productionMode gghh --year 2017  >M3000_hhwwgg_MC_SL.log 2>&1
 
 fi
 if [ ${WhichSamples} -eq 2 ]
@@ -51,6 +52,6 @@ fi
 if [ ${WhichSamples} -eq 3 ]
   then
     echo "cp to different category"
-    cp ws_gghh/ ws_gghh_M300/output_Signal300_M125_FH_2017_13TeV_amcatnloFXFX_pythia8_gghh.root
+    cp /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/ws_gghh/Signal_M300_SL_2017_2jets_gghh.root /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/ws_gghh_M300_SL/output_Signal300_M125_SL_2017_13TeV_amcatnloFXFX_pythia8_gghh_2jets.root
 
 fi

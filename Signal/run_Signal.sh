@@ -37,6 +37,48 @@ if [ ${WhichSamples} -eq 0 ]
     python RunSignalScripts.py --inputConfig config_M3000_2jets_3jets_FH_2017.py --mode 'fTest' >signal_ftest_M3000_2jets_3jets_FH.log 2>&1 
     python RunSignalScripts.py --inputConfig config_M3000_4jets_FH_2017.py --mode 'fTest' >signal_ftest_M3000_4jets_FH.log 2>&1
 fi
+if [ ${WhichSamples} -eq 10 ]
+  then
+    echo "running SL signal fTest"
+    # already saved different mass point root file into different directory
+    # can't run parallel since some operation may have confliction attention
+    
+    python RunSignalScripts.py --inputConfig config_M300_2jets_SL_2017.py --mode 'fTest' >signal_ftest_M300_2jets_SL.log 2>&1 
+    # python RunSignalScripts.py --inputConfig config_M300_2jets_3jets_SL_2017.py --mode 'fTest' >signal_ftest_M300_2jets_3jets_SL.log 2>&1 
+    # python RunSignalScripts.py --inputConfig config_M300_4jets_SL_2017.py --mode 'fTest' >signal_ftest_M300_4jets_SL.log 2>&1
+
+fi
+if [ ${WhichSamples} -eq 11 ]
+  then
+    echo "running SL signal fit"
+    # already saved different mass point root file into different directory
+    # can't run parallel since some operation may have confliction attention
+    python RunSignalScripts.py --inputConfig config_M300_2jets_SL_2017.py --mode 'signalFit' --modeOpts "--skipSystematics" >signal_signalfit_M300_2jets_SL.log 2>&1 
+
+fi
+if [ ${WhichSamples} -eq 12 ]
+  then
+  #attention: need to copy all the CMS_multipdf* to your workspace dir
+    echo 'run copy'
+    
+    cp outdir_dcb_2017_M300_2jets/signalFit/output/CMS-HGG_sigfit_dcb_2017_M300_2jets_gghh_2017_RECO_untagged_2jets_SL.root /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/ws_gghh_M300_SL_2jets/CMS-HGG_sigfit_packaged_RECO_untagged_2jets_SL_2017.root
+fi
+if [ ${WhichSamples} -eq 13 ]
+  then
+    echo 'run packaged'
+    # already saved different mass point root file into different directory
+    python RunPackager.py --cats RECO_untagged_2jets_SL --exts dcb_2017_M300_2jets,  --batch local  --massPoints 125 --year 2017 --outputExt packaged_M300_2jets_SL
+fi
+if [ ${WhichSamples} -eq 14 ]
+  then
+    echo 'run plotter'
+    # already saved different mass point root file into different directory
+    python RunPlotter.py --cats RECO_untagged_2jets_SL --procs all --years 2017 --ext packaged_M300_2jets_SL
+
+fi
+
+
+
 if [ ${WhichSamples} -eq 1 ]
   then
     echo ${whichsample}

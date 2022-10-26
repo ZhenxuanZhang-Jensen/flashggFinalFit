@@ -2,7 +2,7 @@ WhichSamples=${1}
 if [ ${WhichSamples} -eq 0 ]
   then
     echo 'run plot_limits'
-    python plot_limits.py -a --unit 'fb' --ymin 500 --ymax 10000000 --year 2017 --yboost 0.1 --resultType "HH" -l "combined_log"
+    python plot_limits.py -a --unit 'fb' --ymin 500 --ymax 10000000 --year 2017 --yboost 0.1 --resultType "HH" -l "SL_combined" 
 fi
 
 
