@@ -13,7 +13,7 @@ if [ ${WhichSamples} -eq 0 ]
     python RunYields.py --inputWSDirMap 2017=/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_gghh_M1500_1jet --sigModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_gghh_M1500_1jet --bkgModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_1jet --cats auto --procs auto --batch local --ext M1500_1jet >M1500_FH_1jet_yields.log 2>&1
     python RunYields.py --inputWSDirMap 2017=/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_gghh_M2000_1jet --sigModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_gghh_M2000_1jet --bkgModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_1jet --cats auto --procs auto --batch local --ext M2000_1jet >M2000_FH_1jet_yields.log 2>&1
     python RunYields.py --inputWSDirMap 2017=/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_gghh_M2600_1jet --sigModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_gghh_M2600_1jet --bkgModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_1jet --cats auto --procs auto --batch local --ext M2600_1jet >M2600_FH_1jet_yields.log 2>&1
-    python RunYields.py --inputWSDirMap 2017=/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_gghh_M3000_1jet --sigModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_gghh_M3000_1jet --bkgModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_1jet --cats auto --procs auto --batch local --ext M3000_1jet >M3000_FH_1jet_yields.log 2>&1
+    python RunYields.py --inputWSDirMap 2017=/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH_custom/ws_gghh_M3000_1jet_l200 --sigModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH_custom/ws_gghh_M3000_1jet_l200 --bkgModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH_custom/ws_1jet_l200 --cats auto --procs auto --batch local --ext M3000_1jet_l200 >M3000_FH_1jet_yields.log 2>&1
 
     python RunYields.py --inputWSDirMap 2017=/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_gghh_M300_2jets_3jets --sigModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_gghh_M300_2jets_3jets --bkgModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_2jets_3jets --cats auto --procs auto --batch local --ext M300_2jets_3jets >M300_FH_2jets_3jets_yields.log 2>&1
     python RunYields.py --inputWSDirMap 2017=/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_gghh_M500_2jets_3jets --sigModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_gghh_M500_2jets_3jets --bkgModelWSDir /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/ws_2jets_3jets --cats auto --procs auto --batch local --ext M500_2jets_3jets >M500_FH_2jets_3jets_yields.log 2>&1
@@ -69,7 +69,7 @@ if [ ${WhichSamples} -eq 1 ]
     python makeDatacard.py --years 2017 --prune --ext 'M2600_2jets_3jets' --output Datacard_M2600_2jets_3jets_FH
     python makeDatacard.py --years 2017 --prune --ext 'M2600_4jets' --output Datacard_M2600_4jets_FH
     
-    python makeDatacard.py --years 2017 --prune --ext 'M3000_1jet' --output Datacard_M3000_1jet_FH
+    python makeDatacard.py --years 2017 --prune --ext 'M3000_1jet_l200' --output Datacard_M3000_1jet_l200_FH
     python makeDatacard.py --years 2017 --prune --ext 'M3000_2jets_3jets' --output Datacard_M3000_2jets_3jets_FH
     python makeDatacard.py --years 2017 --prune --ext 'M3000_4jets' --output Datacard_M3000_4jets_FH
     
@@ -84,9 +84,10 @@ if [ ${WhichSamples} -eq 2 ]
 fi
 if [ ${WhichSamples} -eq 3 ]
   then
+    combineCards.py FHSL_1jets_M3000_cat0=Datacard_M3000_1jets_cat0_FHSL.txt FHSL_1jets_M3000_cat1=Datacard_M3000_1jets_cat1_FHSL.txt FHSL_1jets_M3000_cat2=Datacard_M3000_1jets_cat2_FHSL.txt FHSL_1jets_M3000_cat3=Datacard_M3000_1jets_cat3_FHSL.txt   > Datacard_combined_FHSL_1jets_M3000.txt
+    combine -M AsymptoticLimits -m 125 -n FHSL_1jets_M3000 Datacard_combined_FHSL_1jets_M3000.txt --run expected >datacard_limits_FHSL_1jets_M3000.log 2>&1 
     # combineCards.py SL_M500=Datacard_combined_M500_SL.txt FH_M500=Datacard_combined_M500_FH.txt  > Datacard_combined_M500_SL_FH.txt
     # combine SL
-    # combineCards.py SL_1jet_M300=Datacard_M300_1jet_SL.txt SL_2jets_M300=Datacard_M300_2jets_SL.txt  > Datacard_combined_M300_SL.txt
     # combineCards.py SL_1jet_M500=Datacard_M500_1jet_SL.txt SL_2jets_M500=Datacard_M500_2jets_SL.txt  > Datacard_combined_M500_SL.txt
     # combineCards.py SL_1jet_M700=Datacard_M700_1jet_SL.txt SL_2jets_M700=Datacard_M700_2jets_SL.txt  > Datacard_combined_M700_SL.txt
     # combineCards.py SL_1jet_M1000=Datacard_M1000_1jet_SL.txt SL_2jets_M1000=Datacard_M1000_2jets_SL.txt  > Datacard_combined_M1000_SL.txt
@@ -117,7 +118,7 @@ fi
 
 if [ ${WhichSamples} -eq 4 ]
   then
-    combine -M AsymptoticLimits -m 125 -n M300_SL_FH Datacard_combined_M300_SL_FH.txt --run expected --rMax 500000 >datacard_limits_M300_SL_FH.log 2>&1 
+    combine -M AsymptoticLimits -m 125 -n M300_SL_FH Datacard.txt --run expected --rMax 500000 >datacard_limits_M300_SL_FH.log 2>&1 
     # combine -M AsymptoticLimits -m 125 -n M500_SL_FH Datacard_combined_M500_SL_FH.txt --run expected --rMax 500000 >datacard_limits_M500_SL_FH.log 2>&1 
     # combine -M AsymptoticLimits -m 125 -n M700_SL_FH Datacard_combined_M700_SL_FH.txt --run expected --rMax 500000 >datacard_limits_M700_SL_FH.log 2>&1 
     # combine -M AsymptoticLimits -m 125 -n M1000_SL_FH Datacard_combined_M1000_SL_FH.txt --run expected --rMax 500000 >datacard_limits_M1000_SL_FH.log 2>&1 
@@ -160,7 +161,7 @@ if [ ${WhichSamples} -eq 4 ]
     # combine -M AsymptoticLimits -m 125 -n M1500_FH Datacard_combined_M1500_FH.txt --run expected --rMax 50000 >datacard_limits_M1500_FH.log 2>&1 
     # combine -M AsymptoticLimits -m 125 -n M2000_FH Datacard_combined_M2000_FH.txt --run expected --rMax 50000 >datacard_limits_M2000_FH.log 2>&1 
     # combine -M AsymptoticLimits -m 125 -n M2600_FH Datacard_combined_M2600_FH.txt --run expected --rMax 50000 >datacard_limits_M2600_FH.log 2>&1 
-    # combine -M AsymptoticLimits -m 125 -n M3000_FH Datacard_combined_M3000_FH.txt --run expected --rMax 50000 >datacard_limits_M3000_FH.log 2>&1 
+    combine -M AsymptoticLimits -m 125 -n M3000_FH Datacard_M3000_1jet_l200_FH.txt --run expected --rMax 50000 >datacard_limits_M3000_FH.log 2>&1 
 
     # combine -M AsymptoticLimits -m 125 -n M300_1jet Datacard_M300_1jet_SL.txt --run expected --rMax 50000 >datacard_limits_M300_1jet.log 2>&1 
     # combine -M AsymptoticLimits -m 125 -n M500_2jets Datacard_M500_2jets_SL.txt --run expected --rMax 50000 >datacard_limits_M500_2jets.log 2>&1 

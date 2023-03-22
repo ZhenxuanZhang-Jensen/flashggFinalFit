@@ -89,8 +89,9 @@ def plotUpperLimits(labels,values,resultType):
         # file_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/2jets_3jets_limit/higgsCombine%s_2jets_3jets.AsymptoticLimits.mH125.root"%(labels[i]) # FH
         # file_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/4jets_limit/higgsCombine%s_4jets.AsymptoticLimits.mH125.root"%(labels[i]) # FH
         # file_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/combined_limit/higgsCombine%s_FH.AsymptoticLimits.mH125.root"%(labels[i]) # FH
-        file_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/combined_limit/higgsCombine%s_SL.AsymptoticLimits.mH125.root"%(labels[i]) # FH
-        print"file: ",file_name
+        # file_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/combined_limit/higgsCombine%s_SL.AsymptoticLimits.mH125.root"%(labels[i]) # FH
+        file_name = "/afs/cern.ch/user/z/zhenxuan/CMSSW_10_6_20/src/flashggFinalFit/Datacard/higgsCombineFHSL_1jets_%s.AsymptoticLimits.mH125.root"%(labels[i]) # FH
+        print "file: ",file_name
         limit = getLimits(file_name)
         up2s.append(limit[4])
 
@@ -165,11 +166,11 @@ def plotUpperLimits(labels,values,resultType):
     c.SetTickx(0)
     c.SetTicky(0)
     c.SetGrid()
-    c.SetLogy()
-    gPad.SetLogy()
+    # c.SetLogy()
+    # gPad.SetLogy()
     c.cd()
-    ROOT.gPad.SetLogy()
-    c.SetLogy()
+    # ROOT.gPad.SetLogy()
+    # c.SetLogy()
     frame = c.DrawFrame(1.4,0.001, 4.1, 10)
     frame.GetYaxis().CenterTitle()
     frame.GetYaxis().SetTitleSize(0.05)
@@ -198,9 +199,9 @@ def plotUpperLimits(labels,values,resultType):
     # frame.GetXaxis().SetTitle("background systematic uncertainty [%]")
     if(args.SM_Point): frame.GetXaxis().SetTitle("Standard Model")
     else: frame.GetXaxis().SetTitle("Radion Mass (GeV)")
-    frame.SetMinimum(100)
+    # frame.SetMinimum(100)
     # frame.SetMinimum(1) # need Minimum > 0 for log scale 
-    # frame.SetMinimum(args.ymin) # need Minimum > 0 for log scale 
+    frame.SetMinimum(args.ymin) # need Minimum > 0 for log scale 
     # frame.SetMaximum(max(up2s)*1.05)
     # frame.SetMaximum(max(up2s)*2)
     # frame.SetMaximum(1000.)
@@ -272,11 +273,29 @@ def plotUpperLimits(labels,values,resultType):
     c.Close()
 
 def main():
-    labels = ['M300','M500','M700','M1000','M1500','M2000','M2600','M3000']
-    values = [300,500,700,1000,1500,2000,2600,3000]
+    labels = ["M1400","M2000","M2400","M2800"]
+    values = [1400,2000,2400,2800]
     resultType = args.resultType
     plotUpperLimits(labels,values,resultType)
 if __name__ == '__main__':
     main()
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

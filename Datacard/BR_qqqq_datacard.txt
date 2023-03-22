@@ -1,4 +1,0 @@
-CMS_wwgg_br_HH_WWgg      rateParam  *  gghh  0.000970198
-CMS_wwgg_br_WW_4Q     rateParam  *  gghh  0.6741
-nuisance  edit  freeze  CMS_wwgg_br_HH_WWgg
-nuisance  edit  freeze  CMS_wwgg_br_WW_4Q
