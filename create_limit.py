@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
 '''
 Hi my friend, believe it or not, I just want to create a king script to create limit with flashggfinal fit framework from ntuples(root) with only one script
 let see if the magic can work
 '''
+import codecs
 import uproot 
 import awkward as ak
+import json
+from collections import defaultdict
 # import ROOT
 import os 
 import logging
@@ -171,31 +175,93 @@ def run_combine(output_card_name,log_name,output_file_name):
     logging.info("begin: {}".format(time.time()))
     os.chdir("/afs/cern.ch/user/z/zhenxuan/CMSSW_10_6_20/src/flashggFinalFit/Datacard")
     # run Runcombine
-    command = "combine -M AsymptoticLimits -m 125 -n " + output_file_name+" "+ output_card_name + ".txt" + " --run expected " + ">" + log_name+  " 2>&1 "
+    command = "combine -M AsymptoticLimits -m 125 --rMax 500000 -n " + output_file_name+" "+ output_card_name + ".txt" + " --run expected " + ">" + log_name+  " 2>&1 "
     run_combine_p = subprocess.call(command, shell=True, stdout=subprocess.PIPE)
     logging.info("run combine \n command :{0}".format(command))
     logging.info("end: {}".format(time.time()))
+def run_combine_card():
+    logging.info("begin: {}".format(time.time()))
+    os.chdir("/afs/cern.ch/user/z/zhenxuan/CMSSW_10_6_20/src/flashggFinalFit/Datacard")
+    # combine the datacard for same masspoint with categories
+    command = "combineCards.py" + "FHSL_1jets_M3000_cat0=Datacard_M3000_1jets_cat0_FHSL.txt FHSL_1jets_M3000_cat1=Datacard_M3000_1jets_cat1_FHSL.txt FHSL_1jets_M3000_cat2=Datacard_M3000_1jets_cat2_FHSL.txt FHSL_1jets_M3000_cat3=Datacard_M3000_1jets_cat3_FHSL.txt   > Datacard_combined_FHSL_1jets_M3000.txt"
+    run_combine_card = subprocess.call(command, shell=True, stdout=subprocess.PIPE)
 if __name__ == "__main__":
-    list_category_name = ['cat0','cat1','cat2','cat3','cat4']
-    # list_category_name = ['cat0']
-    for index_category_name in range(len(list_category_name)):
-        category_name = list_category_name[index_category_name]
-        run_Tree2WS_data(inputpath_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/", ws_data_path="ws_1jets_"+category_name, output_data_root_name="Data_FHSL_2017_cat_1jets_"+category_name+".root")
-        run_backgroundfit(ws_data_path="ws_1jets_"+category_name, log_name = "bkg_ws_1jets_"+category_name+".log" , inputpath_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/", ext_name="FHSL_ws_1jets_"+category_name, cp_name="CMS-HGG_multipdf_RECO_untagged_1jets_"+category_name+"_2017.root")
-        list_mass = ['M3000']
-        for index_mass in range(len(list_mass)):
-            # ----------------------------- 1jet cat all sig ----------------------------- #
-            # boosted_mass = ["M250","M260","M270","M280","M300","M320","M350","M400","M450","M550","M600","M650","M700","M750","M800","M850","M900","M1000","M1100","M1200","M1300","M1400","M1500","M1600","M1700","M1800","M1900","M2000","M2200","M2400","M2600","M2800","M3000"]
-            # list_mass = boosted_mass
-            # attention: have to put the signal root file in ws_gghh
-            run_Tree2WS_sig(inputpath_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/",inputfile_name="Signal_"+list_mass[index_mass]+"_FHSL_2017_1jets_"+category_name+".root",log_file_name= list_mass[index_mass]+"_hhwwgg_MC_FHSL_1jets_"+category_name+".log", ws_path = list_mass[index_mass]+"_1jets_"+category_name, output_sig_root_name="output_Signal"+list_mass[index_mass]+"_1jets_"+category_name+"_M125_FHSL_2017_13TeV_amcatnloFXFX_pythia8_gghh.root")
-            run_ftest(ws_path = list_mass[index_mass] + "_1jets_"+category_name, log_name = "signal_ftest_" + list_mass[index_mass] + "_1jets_"+category_name+"_FHSL.log", inputpath_name= "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/")
-            run_signalfit(ws_path = list_mass[index_mass] + "_1jets_"+category_name, log_name = "signal_signalfit_" + list_mass[index_mass] + "_1jets_"+category_name+"_FHSL.log", inputpath_name="/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/")
-            run_signal_plot(cats="RECO_untagged_1jets_"+category_name, exts="dcb_2017_" + list_mass[index_mass] + "_1jets_"+category_name, outputExt="packaged_" + list_mass[index_mass] + "_1jets_"+category_name, log_packaged_name = "packaged_" + list_mass[index_mass] + "_1jets_"+category_name+".log", ws_path=list_mass[index_mass] + "_1jets_"+category_name, inputpath_name ="/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/", log_plotter_name = "plotter_" + list_mass[index_mass] + "_1jets_"+category_name+".log", cp_name="CMS-HGG_sigfit_packaged_RECO_untagged_1jets_"+category_name+"_2017.root")
-            run_yields(ws_sig_path=list_mass[index_mass] + "_1jets_"+category_name, log_name = list_mass[index_mass] + "_FH_1jets_"+category_name+"_yields.log" , inputpath_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/", ws_bkg_path = "ws_1jets_"+category_name )
-            run_makeDatacard(ws_sig_path=list_mass[index_mass] + "_1jets_"+category_name, log_name = list_mass[index_mass] + "_FH_1jets_"+category_name+"_makeDatacard.log" , output_card_name = "Datacard_" + list_mass[index_mass] + "_1jets_"+category_name+"_FHSL", channel="FHSL" )
-            # break
-            run_combine(output_file_name=list_mass[index_mass] + "_1jets_"+category_name, log_name = list_mass[index_mass] + "_FHSL_1jets_"+category_name+"_makeDatacard.log" , output_card_name = "Datacard_" + list_mass[index_mass] + "_1jets_"+category_name+"_FHSL")
-            # list_mass = ['M250','M260','M280','M300','M450','M550','M400','M350']
-            # for i in range(len(list_mass)):
-            #     run_combine(output_file_name=list_mass[i] + "_1jets_"+category_name, log_name = list_mass[i] + "_FH_1jets_"+category_name+"_makeDatacard.log" , output_card_name = "Datacard_" + list_mass[i] + "_1jets_"+category_name+"_FH")
+
+    # 读取categories.json文件
+    with codecs.open('categories_all_mass_point.json', 'r', encoding='utf-8') as f:
+        categories = json.load(f)
+    keys = list(categories.keys())
+    # 创建一个字典来存储每个key的category names
+    category_names = defaultdict(list)
+
+    # 循环遍历categories中的每个key和value
+    for key, value in categories.items():
+        # 获取value的长度
+        num_categories = len(value)
+        # 创建一个包含相应数量的category names的列表
+        cat_names = ['cat{}'.format(i) for i in range(num_categories)]
+        # 将这个列表存储到category_names字典中
+        category_names[key] = cat_names
+
+
+
+
+
+# example
+# category_name = list_category_name[index_category_name]
+# cat = "FHSamples_SL_boosted_cat"
+# cat_list = ['FHSamples_SL_boosted_cat','FHSamples_SL_fullyresovled_cat','FHSamples_SL_merged_boosted_cat','FHSamples_FH_2Wfatjet_cat','FHSamples_FH_1Wfatjet_cat','FHSamples_FH_fully_resovled_cat']
+cat_list = ['FHSamples_SL_fullyresovled_cat']
+for cat in cat_list:
+    # ------------------------------------- background fit -------------------------------------
+    input_path_name = "/eos/user/z/zhenxuan/hhwwgg_workspace/hhwwgg_root/hhwwgg_root_FH/M1100/"
+    ws_data_path = "ws_2017_"+ cat
+    output_data_root_name = "Data_2017_"+ cat + "_"+ "M1100" + ".root"
+    log_name_data = "bkg_2017_"+cat+".log"
+    run_Tree2WS_data(inputpath_name = input_path_name , ws_data_path=ws_data_path, output_data_root_name=output_data_root_name)
+    ext_name = "ws_2017_" + cat
+    run_backgroundfit(ws_data_path=ws_data_path, log_name = log_name_data , inputpath_name = input_path_name , ext_name=ext_name, cp_name="CMS-HGG_multipdf_RECO_untagged_"+cat+"_2017.root")
+    # ------------------------------------- signal fit -------------------------------------
+
+    input_file_name_signal = "Signal_"+ "M1100" +"_2017_"+cat+".root"
+    log_file_name_signal = "M1100" +"_hhwwgg_MC_2017_"+cat+".log"
+    ws_path_signal = "M1100" +"_2017_"+cat
+    output_root_name_signal = "output_Signal"+"M1100" + cat + "_M125_2017_13TeV_amcatnloFXFX_pythia8_gghh.root"
+    run_Tree2WS_sig(inputpath_name = input_path_name ,inputfile_name=input_file_name_signal,log_file_name= log_file_name_signal, ws_path = ws_path_signal, output_sig_root_name=output_root_name_signal)
+    run_ftest(ws_path = ws_path_signal, log_name = "signal_ftest_" + log_file_name_signal, inputpath_name= input_path_name)
+    run_signalfit(ws_path = ws_path_signal, log_name = "signal_signalfit_" + log_file_name_signal, inputpath_name=input_path_name)
+    run_signal_plot(cats="RECO_untagged_"+cat, exts="dcb_2017_" + "M1100_2017_" + cat, outputExt="packaged_" + "M1100_2017_" + cat, log_packaged_name = "packaged_" + "M1100" + cat+".log", ws_path=ws_path_signal, inputpath_name =input_path_name, log_plotter_name = "plotter_" + "M1100" + cat+".log", cp_name="CMS-HGG_sigfit_packaged_RECO_untagged_"+cat+"_2017.root")
+    run_yields(ws_sig_path=ws_path_signal, log_name = "M1100_2017_" + cat +"_yields.log" , inputpath_name = input_path_name, ws_bkg_path = ws_data_path )
+    run_makeDatacard(ws_sig_path=ws_path_signal, log_name = "M1100" + cat + "_makeDatacard.log" , output_card_name = "Datacard_" + "M1100_2017_" + cat, channel="FH" )
+    run_combine(output_file_name="M1100_2017_" + cat, log_name = "M1100_2017_" + cat +"_combine_limit.log" , output_card_name = "Datacard_" + "M1100_2017_" + cat)
+
+# # # ----------------------------- 1jet cat all sig ----------------------------- #
+# # # attention: have to put the signal root file in ws_gghh
+# run_Tree2WS_sig(inputpath_name = input_path_name + list_mass[index_mass] + "/",inputfile_name="Signal_"+list_mass[index_mass]+"_FHSL_2017_1jets_"+category_name+".root",log_file_name= list_mass[index_mass]+"_hhwwgg_MC_FHSL_1jets_"+category_name+".log", ws_path = list_mass[index_mass]+"_1jets_"+category_name, output_sig_root_name="output_Signal"+list_mass[index_mass]+"_1jets_"+category_name+"_M125_FHSL_2017_13TeV_amcatnloFXFX_pythia8_gghh.root")
+# run_ftest(ws_path = list_mass[index_mass] + "_1jets_"+category_name, log_name = "signal_ftest_" + list_mass[index_mass] + "_1jets_"+category_name+"_FHSL.log", inputpath_name= input_path_name + list_mass[index_mass] + "/")
+# run_signalfit(ws_path = list_mass[index_mass] + "_1jets_"+category_name, log_name = "signal_signalfit_" + list_mass[index_mass] + "_1jets_"+category_name+"_FHSL.log", inputpath_name=input_path_name + list_mass[index_mass] + "/")
+# run_signal_plot(cats="RECO_untagged_1jets_"+category_name, exts="dcb_2017_" + list_mass[index_mass] + "_1jets_"+category_name, outputExt="packaged_" + list_mass[index_mass] + "_1jets_"+category_name, log_packaged_name = "packaged_" + list_mass[index_mass] + "_1jets_"+category_name+".log", ws_path=list_mass[index_mass] + "_1jets_"+category_name, inputpath_name =input_path_name + list_mass[index_mass] + "/", log_plotter_name = "plotter_" + list_mass[index_mass] + "_1jets_"+category_name+".log", cp_name="CMS-HGG_sigfit_packaged_RECO_untagged_1jets_"+category_name+"_2017.root")
+# run_yields(ws_sig_path=list_mass[index_mass] + "_1jets_"+category_name, log_name = list_mass[index_mass] + "_FH_1jets_"+category_name+"_yields.log" , inputpath_name = input_path_name + list_mass[index_mass] + "/", ws_bkg_path = "ws_1jets_"+category_name )
+# run_makeDatacard(ws_sig_path=list_mass[index_mass] + "_1jets_"+category_name, log_name = list_mass[index_mass] + "_FH_1jets_"+category_name+"_makeDatacard.log" , output_card_name = "Datacard_" + list_mass[index_mass] + "_1jets_"+category_name+"_FHSL", channel="FHSL" )
+# run_combine(output_file_name=list_mass[index_mass] + "_1jets_"+category_name, log_name = list_mass[index_mass] + "_FHSL_1jets_"+category_name+"_combine_limit.log" , output_card_name = "Datacard_" + list_mass[index_mass] + "_1jets_"+category_name+"_FHSL")
+#---------#
+    # 现在你可以按需要使用category_names字典来访问每个key的category names
+    # 例如，要访问'M250'的category names：
+    # print(category_names['M250'])
+    # list_mass = keys
+    # for index_mass in range(len(list_mass)):
+    #     list_category_name = category_names[list_mass[index_mass]]
+    #     for index_category_name in range(len(list_category_name)):
+    #         category_name = list_category_name[index_category_name]
+            # run_Tree2WS_data(inputpath_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/" + list_mass[index_mass] + "/", ws_data_path="ws_1jets_"+category_name, output_data_root_name="Data_FHSL_2017_cat_1jets_"+category_name+ "_"+ list_mass[index_mass] + ".root")
+            # run_backgroundfit(ws_data_path="ws_1jets_"+category_name, log_name = "bkg_ws_1jets_"+category_name+".log" , inputpath_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/" + list_mass[index_mass] + "/", ext_name="FHSL_ws_1jets_"+category_name, cp_name="CMS-HGG_multipdf_RECO_untagged_1jets_"+category_name+"_2017.root")
+    #         # # ----------------------------- 1jet cat all sig ----------------------------- #
+    #         # # attention: have to put the signal root file in ws_gghh
+    #         run_Tree2WS_sig(inputpath_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/" + list_mass[index_mass] + "/",inputfile_name="Signal_"+list_mass[index_mass]+"_FHSL_2017_1jets_"+category_name+".root",log_file_name= list_mass[index_mass]+"_hhwwgg_MC_FHSL_1jets_"+category_name+".log", ws_path = list_mass[index_mass]+"_1jets_"+category_name, output_sig_root_name="output_Signal"+list_mass[index_mass]+"_1jets_"+category_name+"_M125_FHSL_2017_13TeV_amcatnloFXFX_pythia8_gghh.root")
+    #         run_ftest(ws_path = list_mass[index_mass] + "_1jets_"+category_name, log_name = "signal_ftest_" + list_mass[index_mass] + "_1jets_"+category_name+"_FHSL.log", inputpath_name= "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/" + list_mass[index_mass] + "/")
+    #         run_signalfit(ws_path = list_mass[index_mass] + "_1jets_"+category_name, log_name = "signal_signalfit_" + list_mass[index_mass] + "_1jets_"+category_name+"_FHSL.log", inputpath_name="/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/" + list_mass[index_mass] + "/")
+    #         run_signal_plot(cats="RECO_untagged_1jets_"+category_name, exts="dcb_2017_" + list_mass[index_mass] + "_1jets_"+category_name, outputExt="packaged_" + list_mass[index_mass] + "_1jets_"+category_name, log_packaged_name = "packaged_" + list_mass[index_mass] + "_1jets_"+category_name+".log", ws_path=list_mass[index_mass] + "_1jets_"+category_name, inputpath_name ="/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/" + list_mass[index_mass] + "/", log_plotter_name = "plotter_" + list_mass[index_mass] + "_1jets_"+category_name+".log", cp_name="CMS-HGG_sigfit_packaged_RECO_untagged_1jets_"+category_name+"_2017.root")
+    #         run_yields(ws_sig_path=list_mass[index_mass] + "_1jets_"+category_name, log_name = list_mass[index_mass] + "_FH_1jets_"+category_name+"_yields.log" , inputpath_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/" + list_mass[index_mass] + "/", ws_bkg_path = "ws_1jets_"+category_name )
+    #         run_makeDatacard(ws_sig_path=list_mass[index_mass] + "_1jets_"+category_name, log_name = list_mass[index_mass] + "_FH_1jets_"+category_name+"_makeDatacard.log" , output_card_name = "Datacard_" + list_mass[index_mass] + "_1jets_"+category_name+"_FHSL", channel="FHSL" )
+    #         run_combine(output_file_name=list_mass[index_mass] + "_1jets_"+category_name, log_name = list_mass[index_mass] + "_FHSL_1jets_"+category_name+"_combine_limit.log" , output_card_name = "Datacard_" + list_mass[index_mass] + "_1jets_"+category_name+"_FHSL")
+        # run_combine_card()
