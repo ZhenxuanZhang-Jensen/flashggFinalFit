@@ -62,7 +62,7 @@ if [ ${WhichSamples} -eq 11 ]
     echo "running SL signal fit"
     # already saved different mass point root file into different directory
     # can't run parallel since some operation may have confliction attention
-    python RunSignalScripts.py --inputConfig config_M1700_2jets_SL_muon_unpassed100cut.py --mode 'signalFit' --modeOpts "--skipSystematics"
+    python RunSignalScripts.py --inputConfig config_M1700_FH_2017_FHSamples_SL_boosted_cat.py --mode 'signalFit' --modeOpts "--skipSystematics"
 
 fi
 if [ ${WhichSamples} -eq 12 ]
@@ -74,9 +74,9 @@ if [ ${WhichSamples} -eq 12 ]
 fi
 if [ ${WhichSamples} -eq 13 ]
   then
-    echo 'run packaged'
+    echo 'run packaged'outdir_dcb_2017_M1700_FH_2017_FHSamples_SL_boosted_cat
     # already saved different mass point root file into different directory
-    python RunPackager.py --cats RECO_untagged_2jets_SL --exts dcb_2017_M300_2jets,  --batch local  --massPoints 125 --year 2017 --outputExt packaged_M300_2jets_SL
+    python RunPackager.py --cats RECO_untagged_FHSamples_SL_boosted_cat --exts dcb_2017_M300_2jets,  --batch local  --massPoints 125 --year 2017 --outputExt packaged_M300_2jets_SL
 fi
 if [ ${WhichSamples} -eq 14 ]
   then

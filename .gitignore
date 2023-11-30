@@ -1,3 +1,15 @@
+Signal/config_*.py
+Datacard/yields*/*
+Background/*
+Signal/config*
+Signal/config_M2800_1jets_cat0.py
+Combine/checks/
+Datacard/run_bias_study_combineCards.sh
+Datacard/*
+categories_all_mass_point.json
+scan_20_events.py
+scan_limit.py
+test.py
 # Editors temp files
 *.swp
 *~

@@ -138,7 +138,7 @@ class FinalModel:
   def buildXSBRSplines(self):
     mh = np.linspace(120.,130.,101)
     # XS
-    if(self.proc == 'gghh'):
+    if(self.proc == 'gghh' or self.proc == 'gghhSL' or self.proc == 'gghhFH'):
       xs = np.ones(101)
     else:
       mp = self.xsbrMap[self.proc]['mode']
@@ -147,7 +147,7 @@ class FinalModel:
     
     self.Splines['xs'] = ROOT.RooSpline1D("fxs_%s_%s"%(self.proc,self.sqrts),"fxs_%s_%s"%(self.proc,self.sqrts),self.MH,len(mh),mh,xs)
     # BR
-    if(self.proc == 'gghh'):
+    if(self.proc == 'gghh' or self.proc == 'gghhSL' or self.proc == 'gghhFH'):
       br = np.ones(101)
     else:
       md = self.xsbrMap['decay']['mode']

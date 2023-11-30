@@ -3,7 +3,7 @@
 backgroundScriptCfg = {
   
   # Setup
-  'inputWSDir':'/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/ws_1jets_cat2', # location of 'allData.root' file
+  'inputWSDir':'/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/M1300/ws_1jets_cat2', # location of 'allData.root' file
   'cats':'auto', # auto: automatically inferred from input ws
   'catOffset':0, # add offset to category numbers (useful for categories from different allData.root files)  
   'ext':'FHSL_ws_1jets_cat2', # extension to add to output directory

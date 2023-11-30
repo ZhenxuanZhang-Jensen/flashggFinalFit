@@ -41,7 +41,7 @@ if [ ${WhichSamples} -eq 11 ]
 fi
 if [ ${WhichSamples} -eq 1 ]
   then
-    python makeDatacard.py --years 2017 --prune --ext 'M300_1jet' --output Datacard_M300_1jet_FH
+    python makeDatacard.py --years 2017 --prune --ext 'M1100_FH_2017_FHSLCombine_FH_boosted_low_purity'  'M1100_SL_2017_FHSLCombine_FH_boosted_low_purity' --output Datacard_test
     python makeDatacard.py --years 2017 --prune --ext 'M300_2jets_3jets' --output Datacard_M300_2jets_3jets_FH
     python makeDatacard.py --years 2017 --prune --ext 'M300_4jets' --output Datacard_M300_4jets_FH
     
@@ -78,14 +78,46 @@ if [ ${WhichSamples} -eq 2 ]
   then
     python cleanDatacard.py --datacard Datacard_M500_SL.txt --factor 2 --removeDoubleSided
     python cleanDatacard.py --datacard Datacard_M1000_SL.txt --factor 2 --removeDoubleSided
-    python cleanDatacard.py --datacard Datacard_M2000_SL.txt --factor 2 --removeDoubleSided
+    python cleanDatacard.py --datacard Datacard_M2000_SL.txt --factor 2 --removeDoubleSided 
     python cleanDatacard.py --datacard Datacard_M3000_SL.txt --factor 2 --removeDoubleSided
     
 fi
 if [ ${WhichSamples} -eq 3 ]
-  then
-    combineCards.py FHSL_1jets_M3000_cat0=Datacard_M3000_1jets_cat0_FHSL.txt FHSL_1jets_M3000_cat1=Datacard_M3000_1jets_cat1_FHSL.txt FHSL_1jets_M3000_cat2=Datacard_M3000_1jets_cat2_FHSL.txt FHSL_1jets_M3000_cat3=Datacard_M3000_1jets_cat3_FHSL.txt   > Datacard_combined_FHSL_1jets_M3000.txt
+  then 
+    # combineCards.py M1100_2017_FHSLCombine_FH_boosted_low_purity=Datacard_M1100_FHSL_2017_FHSLCombine_FH_boosted_low_purity.txt M1100_2017_FHSLCombine_FH_boosted_high_purity=Datacard_M1100_FHSL_2017_FHSLCombine_FH_boosted_high_purity.txt > Datacard_M1100_FHSL_2017_FHSLCombine_FH_boosted_combined.txt
+    combineCards.py M1100_2017_FHSLCombine_FH_boosted_low_purity=Datacard_M1100_FHSL_2017_FHSLCombine_FH_boosted_low_purity.txt M1100_2017_FHSLCombine_FH_boosted_high_purity=Datacard_M1100_FHSL_2017_FHSLCombine_FH_boosted_high_purity.txt M1100_2017_FHSLCombine_SL_merged_boosted_cat=Datacard_M1100_FHSL_2017_FHSLCombine_SL_merged_boosted_cat.txt > Datacard_M1100_FH_2017_FHSLCombine_allCategory_combined.txt
+
+    # combineCards.py M1100_2017_FHSLCombine_FH_boosted_low_purity=Datacard_M1100_SL_2017_FHSLCombine_FH_boosted_low_purity.txt M1100_2017_FHSLCombine_FH_boosted_high_purity=Datacard_M1100_SL_2017_FHSLCombine_FH_boosted_high_purity.txt > Datacard_M1100_SL_2017_FHSLCombine_FH_boosted_combined.txt
+
+    combineCards.py Datacard_M1100_FH_2017_FHSLCombine_FH_boosted_low_purity.txt Datacard_M1100_FH_2017_FHSLCombine_FH_boosted_low_purity.txt > Datacard_test.txt
+
+    combineCards.py M1100_2017__FH_fullyresolved=Datacard_M1700_2017_FHSamples_SL_fullyresovled_cat.txt M1100_2017__SL_fullyresolved=Datacard_M1700_2017_FHSamples_FH_fully_resovled_cat.txt > Datacard_M1100_FHSL_2017_FHSLCombine_FH_boosted_combined_test.txt
+  
+    combine -M AsymptoticLimits -m 125 -n M1100_FHSL Datacard_M1100_FH_2017_FHSLCombine_FH_boosted_combined.root --setParameters mask_signal=1 --run expected >datacard_limits_FHSL_1jets_M1400.log 2>&1 
+
+    combineCards.py
+
+    combineCards.py FHSL_1jets_M2000_cat0=Datacard_M2000_1jets_cat0_FHSL.txt FHSL_1jets_M2000_cat1=Datacard_M2000_1jets_cat1_FHSL.txt FHSL_1jets_M2000_cat2=Datacard_M2000_1jets_cat2_FHSL.txt FHSL_1jets_M2000_cat3=Datacard_M2000_1jets_cat3_FHSL.txt FHSL_1jets_M2000_cat4=Datacard_M2000_1jets_cat4_FHSL.txt FHSL_1jets_M2000_cat5=Datacard_M2000_1jets_cat5_FHSL.txt FHSL_1jets_M2000_cat6=Datacard_M2000_1jets_cat6_FHSL.txt FHSL_1jets_M2000_cat7=Datacard_M2000_1jets_cat7_FHSL.txt FHSL_1jets_M2000_cat8=Datacard_M2000_1jets_cat8_FHSL.txt > Datacard_combined_FHSL_1jets_M2000.txt
+    combine -M AsymptoticLimits -m 125 -n FH_M1100_FH_boosted_combined Datacard_M1100_FHSL_2017_FHSLCombine_FH_boosted_high_purity.txt --run expected >datacard_limits_FHSL_1jets_M2000.log 2>&1 
+
+
+    combineCards.py FHSL_1jets_M2400_cat0=Datacard_M2400_1jets_cat0_FHSL.txt FHSL_1jets_M2400_cat1=Datacard_M2400_1jets_cat1_FHSL.txt FHSL_1jets_M2400_cat2=Datacard_M2400_1jets_cat2_FHSL.txt FHSL_1jets_M2400_cat3=Datacard_M2400_1jets_cat3_FHSL.txt FHSL_1jets_M2400_cat4=Datacard_M2400_1jets_cat4_FHSL.txt FHSL_1jets_M2400_cat5=Datacard_M2400_1jets_cat5_FHSL.txt FHSL_1jets_M2400_cat6=Datacard_M2400_1jets_cat6_FHSL.txt > Datacard_combined_FHSL_1jets_M2400.txt
+    combine -M AsymptoticLimits -m 125 -n FHSL_1jets_M2400 Datacard_combined_FHSL_1jets_M2400.txt --run expected >datacard_limits_FHSL_1jets_M2400.log 2>&1 
+
+    combineCards.py FHSL_1jets_M1000_cat0=Datacard_M1000_1jets_cat0_FHSL.txt FHSL_1jets_M1000_cat1=Datacard_M1000_1jets_cat1_FHSL.txt FHSL_1jets_M1000_cat2=Datacard_M1000_1jets_cat2_FHSL.txt FHSL_1jets_M1000_cat3=Datacard_M1000_1jets_cat3_FHSL.txt FHSL_1jets_M1000_cat4=Datacard_M1000_1jets_cat4_FHSL.txt FHSL_1jets_M1000_cat5=Datacard_M1000_1jets_cat5_FHSL.txt FHSL_1jets_M1000_cat6=Datacard_M1000_1jets_cat6_FHSL.txt FHSL_1jets_M1000_cat7=Datacard_M1000_1jets_cat7_FHSL.txt FHSL_1jets_M1000_cat8=Datacard_M1000_1jets_cat8_FHSL.txt FHSL_1jets_M1000_cat9=Datacard_M1000_1jets_cat9_FHSL.txt > Datacard_combined_FHSL_1jets_M1000.txt
+    combine -M AsymptoticLimits -m 125 -n FHSL_1jets_M1000 Datacard_combined_FHSL_1jets_M1000.txt --run expected >datacard_limits_FHSL_1jets_M1000.log 2>&1 
+
+    combineCards.py FHSL_1jets_M3000_cat0=Datacard_M3000_1jets_cat0_FHSL.txt FHSL_1jets_M3000_cat1=Datacard_M3000_1jets_cat1_FHSL.txt FHSL_1jets_M3000_cat2=Datacard_M3000_1jets_cat2_FHSL.txt FHSL_1jets_M3000_cat3=Datacard_M3000_1jets_cat3_FHSL.txt FHSL_1jets_M3000_cat4=Datacard_M3000_1jets_cat4_FHSL.txt FHSL_1jets_M3000_cat5=Datacard_M3000_1jets_cat5_FHSL.txt FHSL_1jets_M3000_cat6=Datacard_M3000_1jets_cat6_FHSL.txt > Datacard_combined_FHSL_1jets_M3000.txt
     combine -M AsymptoticLimits -m 125 -n FHSL_1jets_M3000 Datacard_combined_FHSL_1jets_M3000.txt --run expected >datacard_limits_FHSL_1jets_M3000.log 2>&1 
+
+    combineCards.py FHSL_1jets_M1500_cat0=Datacard_M1500_1jets_cat0_FHSL.txt FHSL_1jets_M1500_cat1=Datacard_M1500_1jets_cat1_FHSL.txt FHSL_1jets_M1500_cat2=Datacard_M1500_1jets_cat2_FHSL.txt FHSL_1jets_M1500_cat3=Datacard_M1500_1jets_cat3_FHSL.txt FHSL_1jets_M1500_cat4=Datacard_M1500_1jets_cat4_FHSL.txt FHSL_1jets_M1500_cat5=Datacard_M1500_1jets_cat5_FHSL.txt FHSL_1jets_M1500_cat6=Datacard_M1500_1jets_cat6_FHSL.txt FHSL_1jets_M1500_cat7=Datacard_M1500_1jets_cat7_FHSL.txt FHSL_1jets_M1500_cat8=Datacard_M1500_1jets_cat8_FHSL.txt > Datacard_combined_FHSL_1jets_M1500.txt
+    combine -M AsymptoticLimits -m 125 -n FHSL_1jets_M1500 Datacard_combined_FHSL_1jets_M1500.txt --run expected >datacard_limits_FHSL_1jets_M1500.log 2>&1 
+
+    combineCards.py FHSL_1jets_M1100_cat0=Datacard_M1100_1jets_cat0_FHSL.txt FHSL_1jets_M1100_cat1=Datacard_M1100_1jets_cat1_FHSL.txt FHSL_1jets_M1100_cat2=Datacard_M1100_1jets_cat2_FHSL.txt FHSL_1jets_M1100_cat3=Datacard_M1100_1jets_cat3_FHSL.txt FHSL_1jets_M1100_cat4=Datacard_M1100_1jets_cat4_FHSL.txt FHSL_1jets_M1100_cat5=Datacard_M1100_1jets_cat5_FHSL.txt FHSL_1jets_M1100_cat6=Datacard_M1100_1jets_cat6_FHSL.txt FHSL_1jets_M1100_cat7=Datacard_M1100_1jets_cat7_FHSL.txt FHSL_1jets_M1100_cat8=Datacard_M1100_1jets_cat8_FHSL.txt FHSL_1jets_M1100_cat9=Datacard_M1100_1jets_cat9_FHSL.txt > Datacard_combined_FHSL_1jets_M1100.txt
+    combine -M AsymptoticLimits -m 125 -n 2017_FHSLCombine_allCategory_combined Datacard_M1100_FH_2017_FHSLCombine_allCategory_combined.txt --run expected >datacard_limits_FHSL_1jets_M1100.log 2>&1 
+
+
+    # combineCards.py FHSL_1jets_M3000_cat0=Datacard_M3000_1jets_cat0_FHSL.txt FHSL_1jets_M3000_cat1=Datacard_M3000_1jets_cat1_FHSL.txt FHSL_1jets_M3000_cat2=Datacard_M3000_1jets_cat2_FHSL.txt FHSL_1jets_M3000_cat3=Datacard_M3000_1jets_cat3_FHSL.txt   > Datacard_combined_FHSL_1jets_M3000.txt
     # combineCards.py SL_M500=Datacard_combined_M500_SL.txt FH_M500=Datacard_combined_M500_FH.txt  > Datacard_combined_M500_SL_FH.txt
     # combine SL
     # combineCards.py SL_1jet_M500=Datacard_M500_1jet_SL.txt SL_2jets_M500=Datacard_M500_2jets_SL.txt  > Datacard_combined_M500_SL.txt
@@ -118,7 +150,7 @@ fi
 
 if [ ${WhichSamples} -eq 4 ]
   then
-    combine -M AsymptoticLimits -m 125 -n M300_SL_FH Datacard.txt --run expected --rMax 500000 >datacard_limits_M300_SL_FH.log 2>&1 
+    combine -M AsymptoticLimits -m 125 -n Datacard_M1100_2017_FHSLSamples_FH_boosted.txt --run expected --rMax 500000 >datacard_limits_M300_SL_FH.log 2>&1 
     # combine -M AsymptoticLimits -m 125 -n M500_SL_FH Datacard_combined_M500_SL_FH.txt --run expected --rMax 500000 >datacard_limits_M500_SL_FH.log 2>&1 
     # combine -M AsymptoticLimits -m 125 -n M700_SL_FH Datacard_combined_M700_SL_FH.txt --run expected --rMax 500000 >datacard_limits_M700_SL_FH.log 2>&1 
     # combine -M AsymptoticLimits -m 125 -n M1000_SL_FH Datacard_combined_M1000_SL_FH.txt --run expected --rMax 500000 >datacard_limits_M1000_SL_FH.log 2>&1 

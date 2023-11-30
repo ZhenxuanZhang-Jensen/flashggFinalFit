@@ -90,7 +90,7 @@ def plotUpperLimits(labels,values,resultType):
         # file_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/4jets_limit/higgsCombine%s_4jets.AsymptoticLimits.mH125.root"%(labels[i]) # FH
         # file_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH/combined_limit/higgsCombine%s_FH.AsymptoticLimits.mH125.root"%(labels[i]) # FH
         # file_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/combined_limit/higgsCombine%s_SL.AsymptoticLimits.mH125.root"%(labels[i]) # FH
-        file_name = "/afs/cern.ch/user/z/zhenxuan/CMSSW_10_6_20/src/flashggFinalFit/Datacard/higgsCombineFHSL_1jets_%s.AsymptoticLimits.mH125.root"%(labels[i]) # FH
+        file_name = "/eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/Plots/higgsCombineFHSL_1jets_%s.AsymptoticLimits.mH125.root"%(labels[i]) # FH
         print "file: ",file_name
         limit = getLimits(file_name)
         up2s.append(limit[4])
@@ -273,8 +273,8 @@ def plotUpperLimits(labels,values,resultType):
     c.Close()
 
 def main():
-    labels = ["M1400","M2000","M2400","M2800"]
-    values = [1400,2000,2400,2800]
+    labels = ["M1000","M1100","M1400","M1500","M2000","M2400","M3000"]
+    values = [1000,1100,1400,1500,2000,2400,3000]
     resultType = args.resultType
     plotUpperLimits(labels,values,resultType)
 if __name__ == '__main__':

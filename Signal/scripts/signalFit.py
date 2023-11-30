@@ -160,11 +160,18 @@ for mp in opt.massPoints.split(","):
   else: datasetRVForFit[mp] = splitRVWV(d,aset,mode="RV")
   inputWS.Delete()
   f.Close()
+print("datasetRVForFit[MHNominal].numEntries()", datasetRVForFit[MHNominal].numEntries())
+opt.replacementThreshold = 0
+print("opt.replacementThreshold", opt.replacementThreshold)
 
 # Check if nominal yield > threshold (or if +ve sum of weights). If not then use replacement proc x cat
 if( datasetRVForFit[MHNominal].numEntries() < opt.replacementThreshold  )|( datasetRVForFit[MHNominal].sumEntries() < 0. ):
   nominal_numEntries = datasetRVForFit[MHNominal].numEntries()
+  print("debug inside if")
   print("debug opt.cat is : ",opt.cat)
+  # print("debug opt.proc is : ",opt.proc)
+  # print("debug rMap['procRVMap']", rMap['procRVMap'])
+  # print("debug rMap['catRVMap']", rMap['catRVMap'])
   procReplacementFit, catReplacementFit = rMap['procRVMap'][opt.cat], rMap['catRVMap'][opt.cat]
   for mp in opt.massPoints.split(","):
     WSFileName = glob.glob("%s/output*M%s*%s.root"%(opt.inputWSDir,mp,procReplacementFit))[0]

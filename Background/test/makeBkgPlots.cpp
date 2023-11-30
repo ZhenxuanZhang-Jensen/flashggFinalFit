@@ -728,6 +728,7 @@ int main(int argc, char* argv[]){
 	string sigFileName;
 	string outFileName;
 	string outDir;
+	string analysis;
 	int cat;
 	string catLabel;
 	double massStep;
@@ -748,7 +749,7 @@ int main(int argc, char* argv[]){
 	int isFlashgg_ =1;
 	string flashggCatsStr_;
 	vector<string> flashggCats_;
-  double higgsResolution_=0.5;
+    double higgsResolution_=0.5;
 
 	po::options_description desc("Allowed options");
 	desc.add_options()
@@ -757,6 +758,7 @@ int main(int argc, char* argv[]){
 		("sigFileName,s", po::value<string>(&sigFileName), 																	"Input file name")
 		("outFileName,o", po::value<string>(&outFileName)->default_value("BkgPlots.root"),	"Output file name")
 		("outDir,d", po::value<string>(&outDir)->default_value("BkgPlots"),						 			"Output directory")
+		("analysis,a", po::value<string>(&analysis)->default_value(""),						 			"Output directory")
 		("cat,c", po::value<int>(&cat),																								 			"Category")
 		("catLabel,l", po::value<string>(&catLabel),																	 			"Label category")
 		("doBands",																																		 			"Do error bands")
@@ -796,6 +798,10 @@ int main(int argc, char* argv[]){
 	system(Form("mkdir -p %s",outDir.c_str()));
 	if (makeCrossCheckProfPlots) system(Form("mkdir -p %s/normProfs",outDir.c_str()));
 
+	std::cout << "[makeBkgPlots] - bkgFileName: " << bkgFileName << std::endl;
+	// std::cout << "[makeBkgPlots] - inFile: " << inFile << std::endl;
+
+
 	TFile *inFile = TFile::Open(bkgFileName.c_str());
 	//RooWorkspace *inWS = (RooWorkspace*)inFile->Get("multipdf");
 	WSTFileWrapper * inWS = new WSTFileWrapper(bkgFileName,"multipdf");
@@ -815,15 +821,32 @@ int main(int argc, char* argv[]){
 	TFile *outFile = TFile::Open(outFileName.c_str(),"RECREATE");
 	RooWorkspace *outWS = new RooWorkspace("bkgplotws","bkgplotws");
 
-	RooAbsData *data = (RooDataSet*)inWS->data(Form("data_mass_%s",catname.c_str()));
-	if (useBinnedData) data = (RooDataHist*)inWS->data(Form("roohist_data_mass_%s",catname.c_str()));
+	useBinnedData=1; // HHWWgg hack 
+	std::cout << "[makeBkgPlots] - in source code" << std::endl;
+	std::cout << "[makeBkgPlots] - analysis: " << analysis << std::endl;
+
+	RooAbsData *data; 
+
+	if(useBinnedData) data = (RooDataHist*)inWS->data(Form("roohist_data_mass_%s",catname.c_str()));
+	else data = (RooDataSet*)inWS->data(Form("data_mass_%s",catname.c_str()));
+
+	// RooAbsData *data = (RooDataSet*)inWS->data(Form("data_mass_%s",catname.c_str()));
+	// if (useBinnedData) data = (RooDataHist*)inWS->data(Form("roohist_data_mass_%s",catname.c_str()));
 
 	RooAbsPdf *bpdf = 0;
 	RooMultiPdf *mpdf = 0; 
 	RooCategory *mcat = 0;
 	if (isMultiPdf) {
-		mpdf = (RooMultiPdf*)inWS->pdf(Form("CMS_hgg_%s_%dTeV_%d_bkgshape",catname.c_str(),sqrts,year_));
-		mcat = (RooCategory*)inWS->cat(Form("pdfindex_%s_%dTeV_%d",catname.c_str(),sqrts,year_));
+		//RooMultiPdf* mpdf; 
+		//RooCategory* mcat; 
+		// if(analysis == "HHWWgg") mpdf = (RooMultiPdf*)inWS->pdf(Form("CMS_hgg_%s_%dTeV_bkgshape",catname.c_str(),sqrts)); // get rid of 13TeV in name 
+		mpdf = (RooMultiPdf*)inWS->pdf(Form("CMS_hgg_%s_%d_%dTeV_bkgshape",catname.c_str(),year_,sqrts)); // changed order of year, sqrts for HHWWgg
+		// if(analysis == "HHWWgg") mcat = (RooCategory*)inWS->cat(Form("pdfindex_%s_13TeV",catname.c_str()));
+		mcat = (RooCategory*)inWS->cat(Form("pdfindex_%s_%d_%dTeV",catname.c_str(),year_,sqrts)); // changed order of year, sqrts for HHWWgg
+		
+		cout << "mpdf: " << mpdf << endl;
+		cout << "mcat: " << mcat << endl;
+
 		if (!mpdf || !mcat){
 			cout << "[ERROR] "<< "Can't find multipdfs (" << Form("CMS_hgg_%s_%dTeV_%d_bkgshape",catname.c_str(),sqrts,year_) << ") or multicat ("<< Form("pdfindex_%s_%dTeV_%d",catname.c_str(),sqrts,year_) <<")" << endl;
 			exit(0);
@@ -842,8 +865,8 @@ int main(int argc, char* argv[]){
 	}
 
 	cout << "[INFO] "<< "Current PDF and data:" << endl;
-	cout<< "[INFO] " << "\t"; mpdf->getCurrentPdf()->Print();
-	cout << "[INFO] "<< "\t"; data->Print();
+	// cout<< "[INFO] " << "\t"; mpdf->getCurrentPdf()->Print();
+	// cout << "[INFO] "<< "\t"; data->Print();
 
 	// plot all the pdfs for reference
 	if (isMultiPdf || verbose_) plotAllPdfs(mgg,data,mpdf,mcat,Form("%s/allPdfs_%s",outDir.c_str(),catname.c_str()),cat,unblind, isFlashgg_, flashggCats_, year_);
@@ -1006,7 +1029,7 @@ int main(int argc, char* argv[]){
 
 		TCanvas *canv = new TCanvas("c","",800,800);
   ///start extra bit for ratio plot///
-  bool doRatioPlot_=1;
+//   bool doRatioPlot_=1;
   TPad *pad1 = new TPad("pad1","pad1",0,0.25,1,1);
   TPad *pad2 = new TPad("pad2","pad2",0,0,1,0.35);
   pad1->SetBottomMargin(0.18);
@@ -1048,7 +1071,7 @@ int main(int argc, char* argv[]){
 			oneSigmaBand_r->SetFillColor(kGreen);
 			oneSigmaBand_r->SetMarkerColor(kGreen);
 		}
-
+			doSignal = 0;
 		if (doSignal){
       int SignalType=0;
 			TFile *sigFile = TFile::Open(sigFileName.c_str());

@@ -46,7 +46,7 @@ for mp in opt.massPoints.split(","):
   print('fNames',fNames)
   print('opt.exts.split(",")[0]',opt.exts.split(",")[0])
   print("debug: opt.exts", opt.exts)
-  print('fNames[opt.exts.split(",")[0]][0]',fNames[opt.exts.split(",")[0]][0])
+  # print('fNames[opt.exts.split(",")[0]][0]',fNames[opt.exts.split(",")[0]][0])
   print('fNames[0]')
   data_merged["m%s"%mp] = ROOT.TFile(fNames[opt.exts.split(",")[0]][0]).Get("wsig_13TeV").data("sig_mass_m%s_%s"%(mp,opt.cat)).emptyClone("sig_mass_m%s_%s"%(mp,opt.cat))
   data_merged_names.append( data_merged["m%s"%mp].GetName() )

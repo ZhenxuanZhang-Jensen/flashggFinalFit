@@ -1,0 +1,1 @@
+python RunText2Workspace.py --batch local

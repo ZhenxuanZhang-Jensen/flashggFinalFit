@@ -3,9 +3,9 @@ if [ ${WhichSamples} -eq 0 ]
   then
     echo "running data"
     # new version with PN taggers
-    python trees2ws_data.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH_custom/Data_FH_2017_cat_1jet_l200.root
-    python trees2ws_data.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH_custom/Data_FH_2017_cat_1jet_s200.root
-    python trees2ws_data.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH_custom/Data_FH_2017_cat_4jets.root
+    python trees2ws_data.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/M250/Data_FHSL_2017_cat_1jets_cat0_M250.root
+    # python trees2ws_data.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH_custom/Data_FH_2017_cat_1jet_s200.root
+    # python trees2ws_data.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FH_custom/Data_FH_2017_cat_4jets.root
 
 
     ##########
@@ -19,7 +19,7 @@ fi
 if [ ${WhichSamples} -eq 1 ]
   then
     echo "running SL channel"
-    python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/Signal_2800_FHSL_2017_1jets_cat0.root  --inputMass 125 --productionMode gghh --year 2017
+    python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_FHSL_custom/M250/  --inputMass 125 --productionMode gghh --year 2017
     # python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/Signal_M300_SL_2017_2jets.root --inputMass 125 --productionMode gghh --year 2017  >M300_hhwwgg_MC_2jets_SL.log 2>&1 
     # python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/Signal_M500_SL_2017.root --inputMass 125 --productionMode gghh --year 2017  >M500_hhwwgg_MC_SL.log 2>&1 
     # python trees2ws.py --inputConfig config_simple.py --inputTreeFile /eos/user/z/zhenxuan/hhwwgg_root/hhwwgg_root_SL/Signal_M1000_SL_2017.root --inputMass 125 --productionMode gghh --year 2017  >M1000_hhwwgg_MC_SL.log 2>&1 
